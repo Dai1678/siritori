@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".OpponentTurnFragment">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:gravity="center">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="相手のターンです"
+            android:textSize="20sp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="直前の言葉"
+            android:textSize="20sp"/>
+
+        <TextView
+            android:id="@+id/received_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="30dp"
+            android:hint="相手からの言葉"
+            android:textSize="20sp"/>
+
+        <Button
+            android:id="@+id/change_own_turn_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="自分のターン"/>
+
+    </LinearLayout>
+
+</FrameLayout>
