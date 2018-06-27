@@ -19,6 +19,7 @@
             android:textSize="20sp"/>
 
         <TextView
+            android:id="@+id/last_word"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
@@ -26,7 +27,7 @@
             android:textSize="20sp"/>
 
         <TextView
-            android:id="@+id/remain_time_text"
+            android:id="@+id/limit_time_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="30dp"
