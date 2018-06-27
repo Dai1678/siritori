@@ -6,18 +6,17 @@
     android:orientation="vertical">
 
     <TextView
-        android:id="@+id/dialog_title"
-        android:layout_width="match_parent"
+        android:id="@+id/title_text"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="5dp"
-        android:text="title"
-        android:textSize="15sp" />
+        android:text="IPアドレス"
+        android:textSize="20sp"/>
 
-    <EditText
-        android:id="@+id/edit_setting_param"
-        android:layout_width="match_parent"
+    <TextView
+        android:id="@+id/param_text"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:inputType="phone"
-        android:hint="param"/>
+        android:hint="param"
+        android:textSize="18sp"/>
 
 </LinearLayout>
