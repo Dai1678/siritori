@@ -7,7 +7,7 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
-public class TurnActivity extends AppCompatActivity {
+public class TurnActivity extends AppCompatActivity implements ResultFragment.ResultFragmentListener {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,7 +26,7 @@ public class TurnActivity extends AppCompatActivity {
 
             switch (screenTypeStr) {
                 case "own":
-                    fragmentTransaction.replace(R.id.turn_container, MyTurnFragment.newInstance());
+                    fragmentTransaction.replace(R.id.turn_container, MyTurnFragment.newInstance("しりとり"));
                     break;
 
                 case "opponent":
@@ -42,6 +42,11 @@ public class TurnActivity extends AppCompatActivity {
     }
 
     @Override
+    public void finishGame() {
+        finish();
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu, menu);
         return true;
@@ -54,7 +59,10 @@ public class TurnActivity extends AppCompatActivity {
                 Intent intent = new Intent(this, SettingActivity.class);
                 startActivity(intent);
                 break;
+
+                //TODO menu追加
         }
         return true;
     }
+
 }

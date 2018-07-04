@@ -41,7 +41,7 @@ public class SettingActivity extends AppCompatActivity {
         SettingParamModel model = null;
         for (int i=0; i<settingTitleList.size(); i++){
             if (i==0) model = new SettingParamModel(settingTitleList.get(i), preferences.getString("ip", "IPアドレスが設定されていません"));
-            if (i==1) model = new SettingParamModel(settingTitleList.get(i), preferences.getString("port", "ポート番号が設定されていません"));
+            if (i==1) model = new SettingParamModel(settingTitleList.get(i), preferences.getString("port", "50000"));
             settingItemList.add(model);
         }
 

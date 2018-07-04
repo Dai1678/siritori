@@ -1,5 +1,8 @@
 package com.example.dai.siritori;
 
+import android.annotation.SuppressLint;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Message;
 import android.support.annotation.NonNull;
@@ -14,11 +17,18 @@ import android.widget.TextView;
 
 public class OpponentTurnFragment extends Fragment implements UDPServer {
 
+    private SharedPreferences preferences;
+
     private TextView receivedText;
     private Handler handler;
 
     public static OpponentTurnFragment newInstance() {
         return new OpponentTurnFragment();
+    }
+
+    public void onAttach(Context context){
+        super.onAttach(context);
+        preferences = context.getSharedPreferences("Setting", Context.MODE_PRIVATE);
     }
 
     @Override
@@ -34,13 +44,14 @@ public class OpponentTurnFragment extends Fragment implements UDPServer {
 
         Button changeOwnTurnButton = view.findViewById(R.id.change_own_turn_button);
 
+        //TODO 自動遷移ならいらない
         changeOwnTurnButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (getFragmentManager() != null){
                     FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
                     //TODO receivedTextをBundleで渡す
-                    fragmentTransaction.replace(R.id.turn_container, MyTurnFragment.newInstance());
+                    fragmentTransaction.replace(R.id.turn_container, MyTurnFragment.newInstance(receivedText.toString()));
                     fragmentTransaction.commit();
                 }
             }
@@ -52,7 +63,9 @@ public class OpponentTurnFragment extends Fragment implements UDPServer {
         super.onResume();
         handler = new Handler();
         UDP udp = new UDP(this);
-        udp.boot(50000);    //TODO 決め打ちはどうなの
+
+        final int port = preferences.getInt("port", 0);
+        udp.boot(port);    //TODO 決め打ちはどうなの
     }
 
     @Override
@@ -62,11 +75,46 @@ public class OpponentTurnFragment extends Fragment implements UDPServer {
         handler.sendMessage(message);
     }
 
+    @SuppressLint("HandlerLeak")
     class Handler extends android.os.Handler {
         public void handleMessage(Message message){
             String word = message.obj.toString();
 
-            receivedText.setText(word);
+            if (word.equals("勝ちです!")){
+                //TODO ResultFragmentに遷移
+                //負け側の画面(Fragment)に移動
+                if (getFragmentManager() != null) {
+                    FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+                    fragmentTransaction.replace(R.id.turn_container, ResultFragment.newInstance(word));
+                    fragmentTransaction.commit();
+                }
+
+            }else{
+                receivedText.setText(word);
+
+                //TODO 何秒か後に自動でMyTurnFragmentに移動
+                handler = new Handler();
+                handler.postDelayed(new SplashHandler(word), 2000);
+            }
+
+        }
+    }
+
+    class SplashHandler implements Runnable {
+
+        private String text;
+        
+        SplashHandler(String text){
+            this.text = text;
+        }
+        
+        public void run() {
+            if (getFragmentManager() != null){
+                FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+                //TODO receivedTextをBundleで渡す → Debug
+                fragmentTransaction.replace(R.id.turn_container, MyTurnFragment.newInstance(text));
+                fragmentTransaction.commit();
+            }
         }
     }
 }
