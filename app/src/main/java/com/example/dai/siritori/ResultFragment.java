@@ -50,9 +50,11 @@ public class ResultFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        //TODO 結果によって値変更
-        Bundle args = new Bundle();
-        String resultBattle = args.getString("Result");
+        Bundle args = getArguments();
+        String resultBattle = null;
+        if (args != null) {
+            resultBattle = args.getString("Result");
+        }
 
         TextView resultText = view.findViewById(R.id.result_text);
         resultText.setText("あなたの" + resultBattle);

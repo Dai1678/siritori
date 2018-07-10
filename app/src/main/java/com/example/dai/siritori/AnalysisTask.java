@@ -2,21 +2,18 @@ package com.example.dai.siritori;
 
 import android.os.AsyncTask;
 import android.util.Log;
-
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 import org.xmlpull.v1.XmlPullParserFactory;
-
 import java.io.IOException;
 import java.io.StringReader;
-
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
 public class AnalysisTask extends AsyncTask<String, Void, String> {
 
-
+    private AnalysisTaskListener listener;
 
     @Override
     protected String doInBackground(String... url) {
@@ -48,8 +45,9 @@ public class AnalysisTask extends AsyncTask<String, Void, String> {
     protected void onPostExecute(String result) {
         super.onPostExecute(result);
 
-        if (result != null){
+        if (result != null && listener != null){
             Log.d("result", result);
+            listener.getAnalysisResult(result);
         }else{
             Log.d("result", "result == null");
         }
@@ -57,6 +55,8 @@ public class AnalysisTask extends AsyncTask<String, Void, String> {
     }
 
     private String getParseResult(String xml){
+
+        String sendText = null;
 
         try {
             XmlPullParserFactory factory = XmlPullParserFactory.newInstance();
@@ -74,12 +74,33 @@ public class AnalysisTask extends AsyncTask<String, Void, String> {
 
                     case XmlPullParser.START_TAG:
                         String tagName = xpp.getName();
-                        if (tagName.equals("reading")){
-                            eventType = xpp.next();
-                            if (eventType == XmlPullParser.TEXT){
-                                return xpp.getText();   //ひらがなを返す
-                            }
+
+                        switch (tagName) {
+                            case "total_count":
+                                eventType = xpp.next();
+                                if (!(eventType == XmlPullParser.TEXT && xpp.getText().equals("1"))) {
+                                    return "Error: 単語数が一つではありません";
+                                }
+                                Log.d("analysis", "一つの単語です");
+                                break;
+
+                            case "reading":
+                                eventType = xpp.next();
+                                if (eventType == XmlPullParser.TEXT) {
+                                    sendText = xpp.getText();   //ひらがなを返す
+                                }
+                                break;
+
+                            case "pos":
+                                eventType = xpp.next();
+                                if (!(eventType == XmlPullParser.TEXT && xpp.getText().equals("名詞"))) {
+                                    return "Error: 単語が名詞ではありません";
+                                }
+                                Log.d("analysis", "名詞です");
+                                break;
+
                         }
+
                         break;
 
                     case XmlPullParser.END_TAG:
@@ -98,8 +119,16 @@ public class AnalysisTask extends AsyncTask<String, Void, String> {
             e.printStackTrace();
         }
 
-        return null;
+        return sendText;
 
+    }
+
+    void setListener(AnalysisTaskListener listener){
+        this.listener = listener;
+    }
+
+    interface AnalysisTaskListener{
+        void getAnalysisResult(String result);
     }
 
 }

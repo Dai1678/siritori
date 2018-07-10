@@ -12,7 +12,6 @@ import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.TextView;
 
 public class OpponentTurnFragment extends Fragment implements UDPServer {
@@ -20,6 +19,8 @@ public class OpponentTurnFragment extends Fragment implements UDPServer {
     private SharedPreferences preferences;
 
     private TextView receivedText;
+
+    private UDP udp;
     private Handler handler;
 
     public static OpponentTurnFragment newInstance() {
@@ -41,30 +42,15 @@ public class OpponentTurnFragment extends Fragment implements UDPServer {
         super.onViewCreated(view, savedInstanceState);
 
         receivedText = view.findViewById(R.id.received_text);
-
-        Button changeOwnTurnButton = view.findViewById(R.id.change_own_turn_button);
-
-        //TODO 自動遷移ならいらない
-        changeOwnTurnButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (getFragmentManager() != null){
-                    FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
-
-                    fragmentTransaction.replace(R.id.turn_container, MyTurnFragment.newInstance(receivedText.toString()));
-                    fragmentTransaction.commit();
-                }
-            }
-        });
     }
 
     @Override
     public void onResume(){
         super.onResume();
         handler = new Handler();
-        UDP udp = new UDP(this);
+        udp = new UDP(this);
 
-        final String port = preferences.getString("port", "50000");
+        String port = preferences.getString("port", "50000");
         udp.boot(Integer.parseInt(port));
     }
 
@@ -73,16 +59,17 @@ public class OpponentTurnFragment extends Fragment implements UDPServer {
         Message message = Message.obtain();
         message.obj = data;
         handler.sendMessage(message);
+        udp.shutdown();
     }
 
     @SuppressLint("HandlerLeak")
     class Handler extends android.os.Handler {
+        @SuppressLint("SetTextI18n")
         public void handleMessage(Message message){
             String word = message.obj.toString();
 
             if (word.equals("勝ちです!")){
-                //TODO ResultFragmentに遷移 -> Debug
-                //負け側の画面(Fragment)に移動
+                //勝ち表示の画面(Fragment)に移動
                 if (getFragmentManager() != null) {
                     FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
                     fragmentTransaction.replace(R.id.turn_container, ResultFragment.newInstance(word));
@@ -90,9 +77,8 @@ public class OpponentTurnFragment extends Fragment implements UDPServer {
                 }
 
             }else{
-                receivedText.setText(word);
+                receivedText.setText("相手からの言葉   " + word);
 
-                //TODO 何秒か後に自動でMyTurnFragmentに移動 -> Debug
                 handler = new Handler();
                 handler.postDelayed(new SplashHandler(word), 2000);
             }
@@ -111,7 +97,6 @@ public class OpponentTurnFragment extends Fragment implements UDPServer {
         public void run() {
             if (getFragmentManager() != null){
                 FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
-                //TODO receivedTextをBundleで渡す → Debug
                 fragmentTransaction.replace(R.id.turn_container, MyTurnFragment.newInstance(text));
                 fragmentTransaction.commit();
             }

@@ -35,7 +35,7 @@ public class SettingActivity extends AppCompatActivity {
 
         ListView settingListView = findViewById(R.id.setting_list);
 
-        final ArrayList<String> settingTitleList = new ArrayList<>(Arrays.asList("IPアドレス", "ポート番号"));
+        final ArrayList<String> settingTitleList = new ArrayList<>(Arrays.asList("相手端末のIPアドレス", "ポート番号"));
         final ArrayList<SettingParamModel> settingItemList = new ArrayList<>();
 
         SettingParamModel model = null;
