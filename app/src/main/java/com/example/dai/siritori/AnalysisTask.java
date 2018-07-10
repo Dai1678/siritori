@@ -49,7 +49,9 @@ public class AnalysisTask extends AsyncTask<String, Void, String> {
             Log.d("result", result);
             listener.getAnalysisResult(result);
         }else{
-            Log.d("result", "result == null");
+            String errorStr = "Error: API can't used";
+            Log.d("result", errorStr);
+            listener.getAnalysisResult(errorStr);
         }
 
     }

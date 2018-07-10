@@ -96,6 +96,7 @@ public class MyTurnFragment extends Fragment {
                     analysisText(sendStr);  //形態素解析
                 }else{
                     Toast.makeText(getContext(), "送信できません", Toast.LENGTH_SHORT).show();
+                    progressBar.setVisibility(android.widget.ProgressBar.INVISIBLE);
                     countDown.start();
                     sendMessageButton.setEnabled(true);
                     answerEditText.setFocusable(true);
@@ -106,7 +107,7 @@ public class MyTurnFragment extends Fragment {
 
     private void analysisText(String text) {
         String requestUrl = "https://jlp.yahooapis.jp/MAService/V1/parse?";
-        String appId = "appid=" + "dj00aiZpPW5FWEJQWWs0eHZyOCZzPWNvbnN1bWVyc2VjcmV0Jng9ZmQ-" + "&";   //TODO clientIdをstring.xmlに隠す
+        String appId = "appid=" + getContext().getString(R.string.api_key) + "&";
         String param = "results=ma,uniq&sentence=" + text;
 
         String url = requestUrl + appId + param;
@@ -124,6 +125,7 @@ public class MyTurnFragment extends Fragment {
                 if (result.contains("Error")) {
                     Toast.makeText(getContext(), result, Toast.LENGTH_SHORT).show();
                     countDown.start();
+                    progressBar.setVisibility(android.widget.ProgressBar.INVISIBLE);
                     sendMessageButton.setEnabled(true);
                     answerEditText.setFocusable(true);
 
@@ -192,9 +194,10 @@ public class MyTurnFragment extends Fragment {
         }
 
         // インターバルで呼ばれる
+        @SuppressLint("SetTextI18n")
         @Override
         public void onTick(long millisUntilFinished) {
-            limitTimeText.setText(dataFormat.format(millisUntilFinished));
+            limitTimeText.setText("残り時間 : " + dataFormat.format(millisUntilFinished));
         }
     }
 }
