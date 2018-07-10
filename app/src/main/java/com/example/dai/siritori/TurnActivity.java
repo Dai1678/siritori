@@ -59,8 +59,6 @@ public class TurnActivity extends AppCompatActivity implements ResultFragment.Re
                 Intent intent = new Intent(this, SettingActivity.class);
                 startActivity(intent);
                 break;
-
-                //TODO menu追加
         }
         return true;
     }

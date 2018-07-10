@@ -50,7 +50,7 @@ public class OpponentTurnFragment extends Fragment implements UDPServer {
             public void onClick(View v) {
                 if (getFragmentManager() != null){
                     FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
-                    //TODO receivedTextをBundleで渡す
+
                     fragmentTransaction.replace(R.id.turn_container, MyTurnFragment.newInstance(receivedText.toString()));
                     fragmentTransaction.commit();
                 }
@@ -64,8 +64,8 @@ public class OpponentTurnFragment extends Fragment implements UDPServer {
         handler = new Handler();
         UDP udp = new UDP(this);
 
-        final int port = preferences.getInt("port", 0);
-        udp.boot(port);    //TODO 決め打ちはどうなの
+        final String port = preferences.getString("port", "50000");
+        udp.boot(Integer.parseInt(port));
     }
 
     @Override
@@ -81,7 +81,7 @@ public class OpponentTurnFragment extends Fragment implements UDPServer {
             String word = message.obj.toString();
 
             if (word.equals("勝ちです!")){
-                //TODO ResultFragmentに遷移
+                //TODO ResultFragmentに遷移 -> Debug
                 //負け側の画面(Fragment)に移動
                 if (getFragmentManager() != null) {
                     FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
@@ -92,7 +92,7 @@ public class OpponentTurnFragment extends Fragment implements UDPServer {
             }else{
                 receivedText.setText(word);
 
-                //TODO 何秒か後に自動でMyTurnFragmentに移動
+                //TODO 何秒か後に自動でMyTurnFragmentに移動 -> Debug
                 handler = new Handler();
                 handler.postDelayed(new SplashHandler(word), 2000);
             }

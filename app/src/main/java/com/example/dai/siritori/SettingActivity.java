@@ -78,7 +78,7 @@ public class SettingActivity extends AppCompatActivity {
                                     case 1:
                                         SettingParamModel portDataModel = new SettingParamModel(settingTitleList.get(position), param);
                                         settingItemList.set(position, portDataModel);
-                                        editor.putInt("port", Integer.parseInt(param));
+                                        editor.putString("port", param);
                                         break;
                                 }
 

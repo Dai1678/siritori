@@ -21,8 +21,15 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
+
+import okhttp3.Call;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
+import okhttp3.ResponseBody;
 
 public class MyTurnFragment extends Fragment {
 
@@ -30,6 +37,8 @@ public class MyTurnFragment extends Fragment {
 
     TextView limitTimeText;
     private SimpleDateFormat dataFormat = new SimpleDateFormat("ss.SSS", Locale.US);
+
+    OkHttpClient client;
 
     public static MyTurnFragment newInstance(String text) {
         MyTurnFragment fragment = new MyTurnFragment();
@@ -58,9 +67,12 @@ public class MyTurnFragment extends Fragment {
 
         //TODO 相手からの言葉をsetText → Debug
         TextView lastWordText = view.findViewById(R.id.last_word);
+
+        String receiveStr;  //相手から受け取った文字列
         Bundle args = getArguments();
         if (args != null) {
-            lastWordText.setText("直前の言葉 : " + args.getString("ReceiveWord"));
+            receiveStr = args.getString("ReceiveWord");
+            lastWordText.setText("直前の言葉 : " + receiveStr);
         }
 
         //動的に残り時間をカウントダウン
@@ -76,24 +88,25 @@ public class MyTurnFragment extends Fragment {
 
         //TODO preferenceからIPアドレスとポート番号を取得 → Debug
         final String host = preferences.getString("ip", null);
-        final int port = preferences.getInt("port", 50000);
+        final String port = preferences.getString("port", "50000");
 
         Button sendMessageButton = view.findViewById(R.id.send_message_button);
-
         sendMessageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 String message = answerEditText.getText().toString();
 
                 //TODO しりとりのルール : lastWordTextの一番うしろの文字から始まっているか確認
-                //TODO ひらがなだけしか受け付けない
+                //TODO 入力文字をひらがなに変換する
                 //TODO 形態素解析結果を取得してOKならsend
 
+                analysisText(message);
+
                 Log.d("UDPSend", "message:" + message + ", host:" + host + ", port:" + port);
-                if (!message.equals("") && host != null && port != 0){
+                if (emptyDataCheck(message, host) ){
                     countDown.cancel();
                     //TODO UDP送信 → Debug
-                    new UDP().send(host, port, message);
+                    new UDP().send(host, Integer.parseInt(port), message);
 
                     //TODO 相手のターン時画面(Fragment)へ遷移
                     if (getFragmentManager() != null) {
@@ -124,6 +137,20 @@ public class MyTurnFragment extends Fragment {
 
             }
         });
+    }
+
+    private void analysisText(String text) {
+        String requestUrl = "https://jlp.yahooapis.jp/MAService/V1/parse?";
+        String appId = "appid=" + "dj00aiZpPW5FWEJQWWs0eHZyOCZzPWNvbnN1bWVyc2VjcmV0Jng9ZmQ-" + "&";   //TODO clientIdをstring.xmlに隠す
+        String param = "results=ma,uniq&sentence=" + text;
+
+        String url = requestUrl + appId + param;
+
+        new AnalysisTask().execute(url);
+    }
+
+    private boolean emptyDataCheck(String message, String host){
+        return !message.equals("") && host != null;
     }
 
     class CountDown extends CountDownTimer {
