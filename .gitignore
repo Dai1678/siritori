@@ -38,4 +38,4 @@ local.properties
 ehthumbs.db
 Thumbs.db
 
-values/api_key.xml
+.app/src/main/res/values/api_key.xml
