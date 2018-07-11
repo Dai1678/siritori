@@ -158,6 +158,10 @@ public class MyTurnFragment extends Fragment {
                         }
                     }else{
                         Toast.makeText(getContext(), "送信できません", Toast.LENGTH_SHORT).show();
+                        progressBar.setVisibility(android.widget.ProgressBar.INVISIBLE);
+                        countDown.start();
+                        sendMessageButton.setEnabled(true);
+                        answerEditText.setFocusable(true);
                     }
                 }
             }
@@ -205,6 +209,10 @@ public class MyTurnFragment extends Fragment {
                 }
             }else{
                 Toast.makeText(getContext(), "送信できません", Toast.LENGTH_SHORT).show();
+                progressBar.setVisibility(android.widget.ProgressBar.INVISIBLE);
+                countDown.start();
+                sendMessageButton.setEnabled(true);
+                answerEditText.setFocusable(true);
             }
         }
 
