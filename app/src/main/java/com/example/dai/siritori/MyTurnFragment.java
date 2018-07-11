@@ -132,19 +132,28 @@ public class MyTurnFragment extends Fragment {
                 }else{
                     String host = preferences.getString("ip", null);
                     String port = preferences.getString("port", "50000");
+                    String winText = "勝ちです!";
+                    String loseText = "負けです...";
 
-                    if (lastCharCheck(receiveStr, result) && host != null) {
+                    if (compareCharCheck(receiveStr, result) && host != null) {
                         countDown.cancel();
                         progressBar.setVisibility(android.widget.ProgressBar.INVISIBLE);
 
                         Log.d("server", "host: " + host + " port: " + port + " sendMessage: " + result);
+                        if (lastCharCheck(result)) result = winText;
                         UDP udp = new UDP();
                         udp.send(host, Integer.parseInt(port), result);
                         udp.shutdown();
 
+                        //TODO データベースに使用した単語を登録 onDestroyとかで全消去
+
                         if (getFragmentManager() != null) {
                             FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
-                            fragmentTransaction.replace(R.id.turn_container, OpponentTurnFragment.newInstance());
+                            if (result.equals(winText)){
+                                fragmentTransaction.replace(R.id.turn_container, ResultFragment.newInstance(loseText));
+                            }else{
+                                fragmentTransaction.replace(R.id.turn_container, OpponentTurnFragment.newInstance());
+                            }
                             fragmentTransaction.commit();
                         }
                     }else{
@@ -156,13 +165,19 @@ public class MyTurnFragment extends Fragment {
     }
 
     //receiveStrの末文字とsendStrの初めの文字が等しいか平仮名でチェック
-    private boolean lastCharCheck(String receiveText, String sendText){
+    private boolean compareCharCheck(String receiveText, String sendText){
         Character lastReceiveChar = receiveText.charAt(receiveText.length()-1);
         Character firstSendChar = sendText.charAt(0);
 
         Log.d("compareText", "receive: " + lastReceiveChar + " send: " + firstSendChar);
 
         return lastReceiveChar.equals(firstSendChar);
+    }
+
+    private boolean lastCharCheck(String sendText){
+        String lastChar = String.valueOf(sendText.charAt(sendText.length() - 1));
+        String ngWord = "ん";
+        return lastChar.equals(ngWord);
     }
 
     class CountDown extends CountDownTimer {

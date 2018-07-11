@@ -79,6 +79,8 @@ public class OpponentTurnFragment extends Fragment implements UDPServer {
             }else{
                 receivedText.setText("相手からの言葉   " + word);
 
+                //TODO データベースに使用した単語を登録 onDestroyとかで全消去
+
                 handler = new Handler();
                 handler.postDelayed(new SplashHandler(word), 2000);
             }
