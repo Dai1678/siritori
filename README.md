@@ -1,5 +1,5 @@
 # siritori
-形態素解析による完全ルール準拠しりとり ~UDPを添えて~
+形態素解析による完全ルール準拠しりとり ~ UDPを添えて ~
 
 ## Description  
 UDP/TCP通信をテーマとして好きにAndroidアプリを作ってみた。  
@@ -9,6 +9,12 @@ UDP/TCP通信をテーマとして好きにAndroidアプリを作ってみた。
 ## Demo  
 発表資料  
 https://www.slideshare.net/DaiMiyamoto1/siritori-public  
+
+先攻側　デモ動画  
+https://youtu.be/ZhtcbRuiZzk
+
+後攻側 デモ動画  
+https://youtu.be/17ov46S1I40  
 
 ## Feature  
 - 2台Android端末間によるUDP通信で文字列を送りあったしりとり  
